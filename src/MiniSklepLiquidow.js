@@ -35,45 +35,45 @@ export default function MiniSklepLiquidow() {
   useEffect(() => { if (base === "nikotyna" && strength === 36) setStrength(null); }, [base, strength]);
 
 
+
 const calculatePrice = (volume, strength, baseType) => {
   let price = 0;
 
-  // ================== 30ml pakiety ==================
-  const num30 = Math.floor(volume / 30);
-  const restAfter30 = volume % 30;
+  let p10 = 0, p60 = 0;
 
-  const price30 = (() => {
-    if (baseType === "nikotyna") {
-      if ([6, 12].includes(strength)) return 31;
-      if (strength === 18) return 34;
-      if (strength === 24) return 37;
-    } else if (baseType === "sól") {
-      if ([6, 12, 18].includes(strength)) return 43;
-      if ([24, 36].includes(strength)) return 46;
-    }
-    return 0;
-  })();
-
-  price += num30 * price30;
-
-  // ================== Pełne 60ml ==================
-  let p60 = 0;
-  let p10 = 0;
   if (baseType === "sól") {
     if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } 
     else { p10=15.5; p60=82; }
-  } else {
+  } else { // nikotyna
     if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
     else if(strength===18){ p10=11.5; p60=58; } 
     else if(strength===24){ p10=12.5; p60=64; }
   }
 
-  const num60 = Math.floor(restAfter30 / 60);
-  const restAfter60 = restAfter30 % 60;
+  // ================== Najpierw pełne 60ml ==================
+  const num60 = Math.floor(volume / 60);
   price += num60 * p60;
+  let remainder = volume % 60;
 
-  // ================== Pozostałe ml po 10 ==================
-  price += (restAfter60 / 10) * p10;
+  // ================== Następnie pakiety 30ml ==================
+  if (remainder === 30) {
+    const price30 = (() => {
+      if (baseType === "nikotyna") {
+        if ([6,12].includes(strength)) return 31;
+        if (strength === 18) return 34;
+        if (strength === 24) return 37;
+      } else if (baseType === "sól") {
+        if ([6,12,18].includes(strength)) return 43;
+        if ([24,36].includes(strength)) return 46;
+      }
+      return 0;
+    })();
+    price += price30;
+    remainder = 0; // zużyte
+  }
+
+  // ================== Reszta po 10ml ==================
+  price += (remainder / 10) * p10;
 
   return price;
 };
