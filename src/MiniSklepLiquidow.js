@@ -113,9 +113,9 @@ const sendOrder = async () => {
   });
 
   try {
-    await fetch(SHEET_API, {
+await fetch(SHEET_API, {
   method: "POST",
-  headers: { "Content-Type": "application/json" }, // <--- bardzo ważne
+  headers: { "Content-Type": "application/json" }, // konieczne!
   body: JSON.stringify({ date, name, orderText, total, usedAromas })
 });
     showMessage("✅ Zamówienie wysłane!","success");
