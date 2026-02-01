@@ -35,7 +35,7 @@ export default function MiniSklepLiquidow() {
 Licz
 
 const calculatePrice = (volume, strength, baseType) => {
-  // ===== STAŁA CENA DLA 30ML =====
+  // Specjalne ceny dla 30ml
   if (volume === 30) {
     if (baseType === "nikotyna") {
       if ([6,12].includes(strength)) return 31;
@@ -47,10 +47,11 @@ const calculatePrice = (volume, strength, baseType) => {
     }
   }
 
-  // ===== STANDARDOWA LOGIKA =====
+  // Standardowa kalkulacja ceny
   let p10 = 0, p60 = 0;
   if (baseType === "sól") {
-    if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } else { p10=15.5; p60=82; }
+    if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } 
+    else { p10=15.5; p60=82; }
   } else {
     if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
     else if(strength===18){ p10=11.5; p60=58; } 
