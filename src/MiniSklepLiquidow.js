@@ -32,19 +32,35 @@ export default function MiniSklepLiquidow() {
   useEffect(() => { if (strength === 36 && base === "nikotyna") setBase(null); }, [strength, base]);
   useEffect(() => { if (base === "nikotyna" && strength === 36) setStrength(null); }, [base, strength]);
 
-  const calculatePrice = (volume, strength, baseType) => {
-    let p10 = 0, p60 = 0;
-    if (baseType === "sól") {
-      if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } else { p10=15.5; p60=82; }
-    } else {
-      if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
-      else if(strength===18){ p10=11.5; p60=58; } 
-      else if(strength===24){ p10=12.5; p60=64; }
+Licz
+
+const calculatePrice = (volume, strength, baseType) => {
+  // ===== STAŁA CENA DLA 30ML =====
+  if (volume === 30) {
+    if (baseType === "nikotyna") {
+      if ([6,12].includes(strength)) return 31;
+      if (strength === 18) return 34;
+      if (strength === 24) return 37;
+    } else if (baseType === "sól") {
+      if ([6,12,18].includes(strength)) return 43;
+      if ([24,36].includes(strength)) return 46;
     }
-    if (volume < 60) return (volume/10)*p10;
-    const s60 = Math.floor(volume/60);
-    return s60*p60 + ((volume%60)/10)*p10;
-  };
+  }
+
+  // ===== STANDARDOWA LOGIKA =====
+  let p10 = 0, p60 = 0;
+  if (baseType === "sól") {
+    if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } else { p10=15.5; p60=82; }
+  } else {
+    if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
+    else if(strength===18){ p10=11.5; p60=58; } 
+    else if(strength===24){ p10=12.5; p60=64; }
+  }
+
+  if (volume < 60) return (volume/10)*p10;
+  const s60 = Math.floor(volume/60);
+  return s60*p60 + ((volume%60)/10)*p10;
+};
 
   const addToCart = () => {
     if (!name || !selectedFlavor || !ml || !strength || !base) { showMessage("❌ Uzupełnij formularz","error"); return; }
