@@ -35,7 +35,6 @@ export default function MiniSklepLiquidow() {
   useEffect(() => { if (base === "nikotyna" && strength === 36) setStrength(null); }, [base, strength]);
 
 
-
 const calculatePrice = (volume, strength, baseType) => {
   let price = 0;
 
@@ -50,13 +49,16 @@ const calculatePrice = (volume, strength, baseType) => {
     else if(strength===24){ p10=12.5; p60=64; }
   }
 
-  // ================== Najpierw pełne 60ml ==================
-  const num60 = Math.floor(volume / 60);
-  price += num60 * p60;
-  let remainder = volume % 60;
+  let remainder = volume;
 
-  // ================== Następnie pakiety 30ml ==================
-  if (remainder === 30) {
+  // ================== Pełne 60ml ==================
+  const num60 = Math.floor(remainder / 60);
+  price += num60 * p60;
+  remainder = remainder % 60;
+
+  // ================== Pełne 30ml ==================
+  const num30 = Math.floor(remainder / 30);
+  if (num30 > 0) {
     const price30 = (() => {
       if (baseType === "nikotyna") {
         if ([6,12].includes(strength)) return 31;
@@ -68,8 +70,8 @@ const calculatePrice = (volume, strength, baseType) => {
       }
       return 0;
     })();
-    price += price30;
-    remainder = 0; // zużyte
+    price += num30 * price30;
+    remainder = remainder % 30;
   }
 
   // ================== Reszta po 10ml ==================
@@ -77,7 +79,6 @@ const calculatePrice = (volume, strength, baseType) => {
 
   return price;
 };
-
   const addToCart = () => {
     if (!name || !selectedFlavor || !ml || !strength || !base) { showMessage("❌ Uzupełnij formularz","error"); return; }
     if (ml%10!==0){ showMessage("❌ Tylko co 10ml","error"); return; }
