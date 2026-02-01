@@ -166,6 +166,7 @@ export default function MiniSklepLiquidow() {
   };
 
   return (
+<<<<<<< HEAD
     <div
       style={{
         maxWidth: 520,
@@ -177,6 +178,16 @@ export default function MiniSklepLiquidow() {
       }}
     >
       <h2 style={{ textAlign: "center" }}>Mini sklep liquidów</h2>
+=======
+    <div style={{ maxWidth:520, margin:"40px auto", padding:15, borderRadius:12, background:`url(${bg}) center/cover`, boxShadow:"0 0 20px rgba(0,0,0,.2)" }}>
+      <h2 style={{textAlign:"center"}}>Mini sklep liquidów</h2>
+
+      {/* ===== IMIĘ ===== */}
+      <input placeholder="Imię" value={name} onChange={e=>setName(e.target.value)}
+        style={{width:"50%", padding:"4px 6px", marginBottom:10, fontSize:14}} />
+
+  
+>>>>>>> 493a7ab50bd072619b0893d284c756bee4056012
 
       {/* IMIĘ */}
       <input
