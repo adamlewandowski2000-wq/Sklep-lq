@@ -96,23 +96,36 @@ const calculatePrice = (volume, strength, baseType) => {
     setCart(cart.filter((_,i)=>i!==idx));
   };
 
-  const sendOrder = async () => {
-    if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
-    if(isSending) return;
-    setIsSending(true);
-    const d = new Date();
-    const date = `${d.getDate()}/${d.getMonth()+1}`;
-    const orderNumber = Math.floor(100000+Math.random()*900000);
-    const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
-    const total = cart.reduce((s,i)=>s+i.price,0);
-    const usedAromas = {};
-    cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
-    try {
-      await fetch(SHEET_API,{ method:"POST", body:JSON.stringify({ date, orderNumber, name, orderText, total, usedAromas }) });
-      showMessage("✅ Zamówienie wysłane!","success");
-      setCart([]);
-    } catch { showMessage("❌ Błąd wysyłki","error"); } finally { setIsSending(false); }
-  };
+ Ja1
+
+const sendOrder = async () => {
+  if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
+  if(isSending) return;
+  setIsSending(true);
+
+  const d = new Date();
+  const date = `${d.getDate()}/${d.getMonth()+1}`;
+  const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
+  const total = cart.reduce((s,i)=>s+i.price,0);
+  const usedAromas = {};
+  cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
+
+  try {
+    const res = await fetch(SHEET_API, {
+      method: "POST",
+      body: JSON.stringify({ date, name, orderText, total, usedAromas })
+    });
+
+    const data = await res.json(); // <-- tu odbierasz numer zamówienia od Apps Script
+    showMessage(`✅ Zamówienie wysłane! Nr: ${data.orderNumber}`, "success");
+
+    setCart([]);
+  } catch {
+    showMessage("❌ Błąd wysyłki","error");
+  } finally {
+    setIsSending(false);
+  }
+};
 
   const total = cart.reduce((s,i)=>s+i.price,0);
 
