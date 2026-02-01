@@ -220,7 +220,7 @@ export default function MiniSklepLiquidow() {
       lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
       background:base?.toLowerCase()===v.toLowerCase()?"green":"#eee",
       color:base?.toLowerCase()===v.toLowerCase()?"#fff":"#000",
-      opacity:disabled?.4:1
+      opacity:disabled? 0.4:1
     }}>
       {v}
   </div>
