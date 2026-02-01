@@ -166,15 +166,14 @@ export default function MiniSklepLiquidow() {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: 520,
-        margin: "40px auto",
-        padding: 15,
-        borderRadius: 12,
-        background: `url(${bg}) center / contain no-repeat`,
-        boxShadow: "0 0 20px rgba(0,0,0,.2)"
-      }}
+   <div style={{
+  width: "100%",            // szerokość kontenera
+  height: "100vh",          // wysokość na cały ekran
+  backgroundImage: `url(${bg})`, // twoje zdjęcie
+  backgroundPosition: "center",  // wyśrodkowanie obrazu
+  backgroundSize: "contain",     // pokazuje całe zdjęcie, nie przycina
+  backgroundRepeat: "no-repeat", // bez powtarzania
+}} />
     >
       <h2 style={{ textAlign: "center" }}>Mini sklep liquidów</h2>
 
