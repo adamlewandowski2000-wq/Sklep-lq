@@ -93,7 +93,6 @@ const calculatePrice = (volume, strength, baseType) => {
     setCart(cart.filter((_,i)=>i!==idx));
   };
 
-Jaka
 
 const sendOrder = async () => {
   if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
