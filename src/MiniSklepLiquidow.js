@@ -102,21 +102,22 @@ const sendOrder = async () => {
   setIsSending(true);
 
   const d = new Date();
-  const date = `${d.getDate()}/${d.getMonth()+1}`;
+  const date = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; // pełna data
+
   const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
   const total = cart.reduce((s,i)=>s+i.price,0);
+
   const usedAromas = {};
-  cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
+  cart.forEach(i=>{
+    usedAromas[i.flavor.id] = (usedAromas[i.flavor.id]||0) + i.ml/10;
+  });
 
   try {
-    const res = await fetch(SHEET_API, {
-      method: "POST",
+    await fetch(SHEET_API,{
+      method:"POST",
       body: JSON.stringify({ date, name, orderText, total, usedAromas })
     });
-
-    const data = await res.json(); // <-- tu odbierasz numer zamówienia od Apps Script
-    showMessage(`✅ Zamówienie wysłane! Nr: ${data.orderNumber}`, "success");
-
+    showMessage("✅ Zamówienie wysłane!","success");
     setCart([]);
   } catch {
     showMessage("❌ Błąd wysyłki","error");
