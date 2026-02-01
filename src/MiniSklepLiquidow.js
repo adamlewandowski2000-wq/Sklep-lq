@@ -2,8 +2,7 @@
 import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
-const SHEET_API =
-  "https://script.google.com/macros/s/AKfycbx-MB1gYK5FvUa7KNQBB6bL50A0JK_xoHELyGSMSPawOAwsJ7vQ8ADNJAS2TBz-5Y76/exec";
+const SHEET_API = "https://script.google.com/macros/s/AKfycbx-MB1gYK5FvUa7KNQBB6bL50A0JK_xoHELyGSMSPawOAwsJ7vQ8ADNJAS2TBz-5Y76/exec";
 
 export default function MiniSklepLiquidow() {
   const [inventory, setInventory] = useState({});
@@ -30,32 +29,28 @@ export default function MiniSklepLiquidow() {
       .catch(console.error);
   }, []);
 
-  useEffect(() => {
-    if (strength === 36 && base === "Nikotyna") setBase(null);
-  }, [strength, base]);
-
-  useEffect(() => {
-    if (base === "Nikotyna" && strength === 36) setStrength(null);
-  }, [base, strength]);
+  useEffect(() => { if (strength === 36 && base === "nikotyna") setBase(null); }, [strength, base]);
+  useEffect(() => { if (base === "nikotyna" && strength === 36) setStrength(null); }, [base, strength]);
 
   const calculatePrice = (volume, strength, baseType) => {
     let p10 = 0, p60 = 0;
-    if (baseType === "Sól") {
-      if ([6, 12, 18].includes(strength)) { p10 = 14.5; p60 = 76; } else { p10 = 15.5; p60 = 82; }
+    if (baseType === "sól") {
+      if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } else { p10=15.5; p60=82; }
     } else {
-      if ([6, 12].includes(strength)) { p10 = 10.5; p60 = 52; } 
-      else if(strength===18) { p10=11.5; p60=58; } 
-      else if(strength===24) { p10=12.5; p60=64; }
+      if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
+      else if(strength===18){ p10=11.5; p60=58; } 
+      else if(strength===24){ p10=12.5; p60=64; }
     }
-    if(volume<60) return (volume/10)*p10;
-    return Math.floor(volume/60)*p60 + ((volume%60)/10)*p10;
+    if (volume < 60) return (volume/10)*p10;
+    const s60 = Math.floor(volume/60);
+    return s60*p60 + ((volume%60)/10)*p10;
   };
 
   const addToCart = () => {
     if (!name || !selectedFlavor || !ml || !strength || !base) { showMessage("❌ Uzupełnij formularz","error"); return; }
-    if (ml % 10 !== 0) { showMessage("❌ Tylko co 10ml","error"); return; }
+    if (ml%10!==0){ showMessage("❌ Tylko co 10ml","error"); return; }
     const maxMl = (inventory[selectedFlavor.id]||0)*10;
-    if(ml>maxMl){ showMessage(`❌ Max ${maxMl}ml`,"error"); return; }
+    if (ml > maxMl){ showMessage(`❌ Max ${maxMl}ml`,"error"); return; }
     const price = calculatePrice(Number(ml), strength, base);
     setCart([...cart, { flavor:selectedFlavor, ml:Number(ml), strength, base, price }]);
     setInventory(prev => ({ ...prev, [selectedFlavor.id]: prev[selectedFlavor.id]-ml/10 }));
@@ -89,14 +84,15 @@ export default function MiniSklepLiquidow() {
   const total = cart.reduce((s,i)=>s+i.price,0);
 
   const categoryColors = {
-    "Miksy owocowe":["#fecaca","#fff"],
-    "Owoce leśne":["#e9d5ff","#fff"],
-    "Tropikalne/Egzotyczne":["#bbf7d0","#fff"],
-    "Cytrusy/kwaśne":["#fef08a","#fff"],
-    "Miętowe/mentholowe":["#bae6fd","#fff"],
-    "Inne smaki":["#f5f5f5","#fff"]
+    "Miksy owocowe":["#f87171","#fecaca"],
+    "Owoce leśne":["#a78bfa","#e9d5ff"],
+    "Tropikalne/Egzotyczne":["#facc15","#fef08a"],
+    "Cytrusy/kwaśne":["#fde68a","#fef9c3"],
+    "Miętowe/mentholowe":["#60a5fa","#bfdbfe"],
+    "Inne smaki":["#34d399","#bbf7d0"]
   };
 
+  // ================= SMAKI =================
   const flavorCategories = {
     "Miksy owocowe":[
       {id:1,name:"Czerwone owoce, Czarna porzeczka, Truskawka, Jeżyna, Malina, Jagoda, Efekt chłodu"},
@@ -165,20 +161,8 @@ export default function MiniSklepLiquidow() {
     ]
   };
 
+
   return (
-<<<<<<< HEAD
-    <div
-      style={{
-        maxWidth: 520,
-        margin: "40px auto",
-        padding: 15,
-        borderRadius: 12,
-        background: `url(${bg}) center / contain no-repeat`,
-        boxShadow: "0 0 20px rgba(0,0,0,.2)"
-      }}
-    >
-      <h2 style={{ textAlign: "center" }}>Mini sklep liquidów</h2>
-=======
     <div style={{ maxWidth:520, margin:"40px auto", padding:15, borderRadius:12, background:`url(${bg}) center/cover`, boxShadow:"0 0 20px rgba(0,0,0,.2)" }}>
       <h2 style={{textAlign:"center"}}>Mini sklep liquidów</h2>
 
@@ -187,183 +171,88 @@ export default function MiniSklepLiquidow() {
         style={{width:"50%", padding:"4px 6px", marginBottom:10, fontSize:14}} />
 
   
->>>>>>> 493a7ab50bd072619b0893d284c756bee4056012
 
-      {/* IMIĘ */}
-      <input
-        placeholder="Imię"
-        value={name}
-        onChange={e => setName(e.target.value)}
-        style={{ width: "50%", padding: "4px 6px", marginBottom: 10, fontSize: 14 }}
-      />
 
-      {/* SMAKI */}
-      <h3>Smaki</h3>
-      {Object.entries(flavorCategories).map(([cat, flavors]) => {
-        const [main, light] = categoryColors[cat];
-        return (
-          <details key={cat} style={{ marginBottom: 10, borderRadius: 8, padding: 5, background: main }}>
-            <summary style={{ fontWeight: "bold", padding: 6 }}>{cat}</summary>
-            <div style={{ padding: 6, display: "flex", flexDirection: "column", gap: 4 }}>
-              {flavors.map(f => {
-                const stock = (inventory[f.id] || 0) * 10;
-                const disabled = stock === 0;
-                return (
-                  <label
-                    key={f.id}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      fontSize: 13,
-                      background: `linear-gradient(90deg, ${light}, #fff)`,
-                      borderRadius: 6,
-                      padding: "4px 6px",
-                      opacity: disabled ? 0.5 : 1,
-                      cursor: disabled ? "not-allowed" : "pointer"
-                    }}
-                    onClick={() => !disabled && setSelectedFlavor(f)}
-                  >
-                    <span
-                      style={{
-                        width: 16,
-                        height: 16,
-                        border: "1px solid #000",
-                        display: "inline-block",
-                        marginRight: 6,
-                        textAlign: "center",
-                        lineHeight: "16px",
-                        background: selectedFlavor?.id === f.id ? "green" : "#fff",
-                        color: "#fff"
-                      }}
-                    >
-                      {selectedFlavor?.id === f.id ? "✔" : ""}
-                    </span>
-                    {f.id}. {f.name}{" "}
-                    <span style={{ marginLeft: 6, fontWeight: "bold", color: stock === 0 ? "red" : "#22c55e" }}>
-                      (na stanie: {stock}ml)
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
-          </details>
-        );
+{/* ===== SMAKI ===== */}
+<h3>Smaki</h3>
+{Object.entries(flavorCategories).map(([cat, flavors])=>{
+  const [main, light] = categoryColors[cat];
+  return <details key={cat} style={{marginBottom:10, borderRadius:8, padding:5, background:main}}>
+    <summary style={{fontWeight:"bold", padding:6}}>{cat}</summary>
+    <div style={{padding:6, display:"flex", flexDirection:"column", gap:4}}>
+      {flavors.map(f=>{
+        const stock=(inventory[f.id]||0)*10;
+        const stockColor = stock===0?"red":stock<120?"#facc15":"#22c55e";
+
+        return <label key={f.id} style={{
+          display:"flex", alignItems:"center", fontSize:13, 
+          background:`linear-gradient(90deg, ${light}, #fff)`, borderRadius:6, padding:"4px 6px",
+          cursor:stock===0?"not-allowed":"pointer", opacity:stock===0?0.6:1
+        }}
+        onClick={()=>{
+          if(stock===0) showMessage("❌ Brak na stanie", "error");
+          else setSelectedFlavor(f);
+        }}>
+          <span style={{
+            width:16, height:16, border:"1px solid #000", display:"inline-block",
+            marginRight:6, textAlign:"center", lineHeight:"16px",
+            background:selectedFlavor?.id===f.id?"green":"#fff", color:"#fff"
+          }}>{selectedFlavor?.id===f.id?"✔":""}</span>
+          {f.id}. {f.name}
+          <span style={{marginLeft:6, fontWeight:"bold", color:stockColor}}>
+            (na stanie: {stock}ml)
+          </span>
+        </label>
       })}
+    </div>
+  </details>
+})}
 
-      {/* BAZA */}
-      <h3>Baza</h3>
-      {["Nikotyna", "Sól"].map(v => {
-        const disabled = v === "Nikotyna" && strength === 36;
-        return (
-          <div
-            key={v}
-            onClick={() => !disabled && setBase(v)}
-            style={{
-              display: "inline-block",
-              width: 50,
-              height: 30,
-              marginRight: 6,
-              border: "1px solid #000",
-              borderRadius: 4,
-              textAlign: "center",
-              lineHeight: "30px",
-              cursor: disabled ? "not-allowed" : "pointer",
-              background: base === v ? "green" : "#eee",
-              color: base === v ? "#fff" : "#000",
-              opacity: disabled ? 0.4 : 1
-            }}
-          >
-            {v}
-          </div>
-        );
-      })}
+{/* ===== BAZA ===== */}
+<h3>Baza</h3>
+{["Nikotyna","Sól"].map(v=>{
+  const disabled = v==="Nikotyna" && strength===36;
+  return <div key={v} onClick={()=>!disabled && setBase(v.toLowerCase())} 
+    style={{
+      display:"inline-block", width:70, height:30, marginRight:6,
+      border:"1px solid #000", borderRadius:4, textAlign:"center",
+      lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
+      background:base?.toLowerCase()===v.toLowerCase()?"green":"#eee",
+      color:base?.toLowerCase()===v.toLowerCase()?"#fff":"#000",
+      opacity:disabled?.4:1
+    }}>
+      {v}
+  </div>
+})}
 
-      {/* MOC */}
-      <h3>Moc</h3>
-      {[6, 12, 18, 24, 36].map(v => {
-        const disabled = base === "Nikotyna" && v === 36;
-        return (
-          <div
-            key={v}
-            onClick={() => !disabled && setStrength(v)}
-            style={{
-              display: "inline-block",
-              width: 40,
-              height: 30,
-              marginRight: 6,
-              border: "1px solid #000",
-              borderRadius: 4,
-              textAlign: "center",
-              lineHeight: "30px",
-              cursor: disabled ? "not-allowed" : "pointer",
-              background: strength === v ? "green" : "#eee",
-              color: strength === v ? "#fff" : "#000",
-              opacity: disabled ? 0.4 : 1
-            }}
-          >
-            {v}mg
-          </div>
-        );
-      })}
+{/* ===== MOC ===== */}
+<h3>Moc</h3>
+{[6,12,18,24,36].map(v=>{
+  const disabled = base==="nikotyna" && v===36;
+  return <div key={v} onClick={()=>!disabled && setStrength(v)} style={{
+    display:"inline-block", width:40, height:30, marginRight:6, 
+    border:"1px solid #000", borderRadius:4, textAlign:"center",
+    lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
+    background:strength===v?"green":"#eee", color:strength===v?"#fff":"#000",
+    opacity:disabled?.4:1
+  }}>{v}mg</div>
+})}
 
-      {/* ILOŚĆ */}
+      {/* ===== ILOŚĆ ===== */}
       <h3>Ilość (ml)</h3>
-      <input
-        type="number"
-        step={10}
-        min={10}
-        value={ml}
-        onChange={e => setMl(e.target.value)}
-        style={{ width: "30%", padding: "4px 6px", fontSize: 14, WebkitAppearance: "none" }}
-      />
+      <input type="number" step={10} min={10} value={ml} onChange={e=>setMl(e.target.value)} style={{width:"30%", padding:"4px 6px", fontSize:14, WebkitAppearance:"none"}}/>
 
-      {/* DODAJ */}
-      <button
-        onClick={addToCart}
-        style={{ width: "100%", marginTop: 10, padding: 12, borderRadius: 8, background: "#22c55e", color: "#fff", border: "none" }}
-      >
-        ➕ Dodaj do koszyka
-      </button>
+      <button onClick={addToCart} style={{width:"100%", marginTop:10, padding:12, borderRadius:8, background:"#22c55e", color:"#fff", border:"none"}}>➕ Dodaj do koszyka</button>
 
-      {message && (
-        <div
-          style={{
-            marginTop: 8,
-            padding: 8,
-            background: messageType === "error" ? "#fecaca" : "#bbf7d0",
-            borderRadius: 6,
-            textAlign: "center"
-          }}
-        >
-          {message}
-        </div>
-      )}
+      {message && <div style={{marginTop:8, padding:8, background:messageType==="error"?"#fecaca":"#bbf7d0", borderRadius:6, textAlign:"center"}}>{message}</div>}
 
-      {/* KOSZYK */}
       <h3>Koszyk</h3>
-      {cart.map((i, idx) => (
-        <div key={idx}>
-          {i.flavor.id}/{i.ml}ml/{i.strength}mg/{i.base} — {i.price.toFixed(2)}zł{" "}
-          <button onClick={() => removeItem(idx)}>❌</button>
-        </div>
-      ))}
+      {cart.map((i,idx)=><div key={idx}>{i.flavor.id}/{i.ml}ml/{i.strength}mg/{i.base} — {i.price.toFixed(2)}zł <button onClick={()=>removeItem(idx)}>❌</button></div>)}
 
       <h3>Suma: {total.toFixed(2)} zł</h3>
 
-      <button
-        disabled={isSending}
-        onClick={sendOrder}
-        style={{
-          width: "100%",
-          marginTop: 15,
-          padding: 12,
-          background: isSending ? "#9ca3af" : "#16a34a",
-          color: "#fff",
-          border: "none",
-          borderRadius: 8
-        }}
-      >
-        {isSending ? "Wysyłanie..." : "📤 Wyślij zamówienie"}
+      <button disabled={isSending} onClick={sendOrder} style={{width:"100%", marginTop:15, padding:12, background:isSending?"#9ca3af":"#16a34a", color:"#fff", border:"none", borderRadius:8}}>
+        {isSending?"Wysyłanie...":"📤 Wyślij zamówienie"}
       </button>
     </div>
   );
