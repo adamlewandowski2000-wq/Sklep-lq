@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
-const SHEET_API = "https://script.google.com/macros/s/AKfycbxvZ-gcJ__UNA92mbGsgP0D-A0038KQEv96oJfjr9IpiBnYkkvGAGFooFsQHdJpWwVF/exec";
+const SHEET_API = "https://script.google.com/macros/s/AKfycbx8Dgk47rG_0JLzCTF-3FBQxtuWwa-nk0_N1UAFaCMb6wfoG4EwW338C_9wfmT30Etp/exec";
 
 export default function MiniSklepLiquidow() {
   const [inventory, setInventory] = useState({});
@@ -111,10 +111,16 @@ const sendOrder = async () => {
   cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
 
   try {
-    await fetch(SHEET_API,{
-      method:"POST",
-      body:JSON.stringify({ date, name, orderText, total, usedAromas })
-    });
+ await fetch(SHEET_API,{
+  method:"POST",
+  body:JSON.stringify({
+    name,
+    orderText,
+    total,
+    usedAromas
+  })
+});
+
 
     showMessage("✅ Zamówienie wysłane!","success");
     setCart([]);
