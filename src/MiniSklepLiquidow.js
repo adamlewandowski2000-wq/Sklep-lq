@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
-const SHEET_API = "https://script.google.com/macros/s/AKfycbyNE8t4uraKgvnL3dDgCoDa5KlF2wT1aGwQ2bxDtGS6yl_X0xZIEpU5WdekL3595oUV/exec";
+const SHEET_API = "https://script.google.com/macros/s/AKfycbx-MB1gYK5FvUa7KNQBB6bL50A0JK_xoHELyGSMSPawOAwsJ7vQ8ADNJAS2TBz-5Y76/exec";
 
 export default function MiniSklepLiquidow() {
   const [inventory, setInventory] = useState({});
@@ -93,32 +94,23 @@ const calculatePrice = (volume, strength, baseType) => {
     setCart(cart.filter((_,i)=>i!==idx));
   };
 
-
-const sendOrder = async () => {
-  if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
-  if(isSending) return;
-  setIsSending(true);
-
-  const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
-  const total = cart.reduce((s,i)=>s+i.price,0);
-  const usedAromas = {};
-  cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
-
-  try {
-    await fetch(SHEET_API, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" }, // <- ważne!
-      body: JSON.stringify({ name, orderText, total, usedAromas }) // data i orderNumber usuń
-    });
-    showMessage("✅ Zamówienie wysłane!","success");
-    setCart([]);
-  } catch(err) {
-    console.error(err);
-    showMessage("❌ Błąd wysyłki","error");
-  } finally {
-    setIsSending(false);
-  }
-};
+  const sendOrder = async () => {
+    if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
+    if(isSending) return;
+    setIsSending(true);
+    const d = new Date();
+    const date = `${d.getDate()}/${d.getMonth()+1}`;
+    const orderNumber = Math.floor(100000+Math.random()*900000);
+    const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
+    const total = cart.reduce((s,i)=>s+i.price,0);
+    const usedAromas = {};
+    cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
+    try {
+      await fetch(SHEET_API,{ method:"POST", body:JSON.stringify({ date, orderNumber, name, orderText, total, usedAromas }) });
+      showMessage("✅ Zamówienie wysłane!","success");
+      setCart([]);
+    } catch { showMessage("❌ Błąd wysyłki","error"); } finally { setIsSending(false); }
+  };
 
   const total = cart.reduce((s,i)=>s+i.price,0);
 
