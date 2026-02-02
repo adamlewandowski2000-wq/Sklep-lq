@@ -101,7 +101,8 @@ const sendOrder = async () => {
   setIsSending(true);
 
   const d = new Date();
-  const date = `${d.getDate()}/${d.getMonth()+1}`;
+  const date = Utilities.formatDate(new Date(), "Europe/Warsaw", "dd.MM.yyyy");
+
 
   const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
   const total = cart.reduce((s,i)=>s+i.price,0);
