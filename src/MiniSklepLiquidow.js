@@ -99,25 +99,21 @@ const sendOrder = async () => {
   if(isSending) return;
   setIsSending(true);
 
-  const d = new Date();
-  const date = `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; // pełna data
-
   const orderText = cart.map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`).join("\n");
   const total = cart.reduce((s,i)=>s+i.price,0);
-
   const usedAromas = {};
-  cart.forEach(i=>{
-    usedAromas[i.flavor.id] = (usedAromas[i.flavor.id]||0) + i.ml/10;
-  });
+  cart.forEach(i=>{ usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10; });
 
   try {
-    await fetch(SHEET_API,{
-      method:"POST",
-      body: JSON.stringify({ date, name, orderText, total, usedAromas })
+    await fetch(SHEET_API, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }, // <- ważne!
+      body: JSON.stringify({ name, orderText, total, usedAromas }) // data i orderNumber usuń
     });
     showMessage("✅ Zamówienie wysłane!","success");
     setCart([]);
-  } catch {
+  } catch(err) {
+    console.error(err);
     showMessage("❌ Błąd wysyłki","error");
   } finally {
     setIsSending(false);
