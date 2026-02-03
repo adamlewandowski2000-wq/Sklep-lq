@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
-const SHEET_API = "https://script.google.com/macros/s/AKfycbyS6_koRqaV19SNr2sn2ySXIyLXyR3FCqpGpZfRI-UWdxcc7i_2V_bWKRr2ZlFV4GtD/exec";
+const SHEET_API = "https://script.google.com/macros/s/AKfycbzcdQ1Uwy8q0-vyKCC5_XitTACaf66Hr4HvI6UZUDBhA6QvvHHzxJeFU5ZNnMxlVQ-X/exec";
 
 export default function MiniSklepLiquidow() {
-  const [inventory, setInventory] = useState({});
+  const [serverInventory, setServerInventory] = useState({});
   const [name, setName] = useState("");
   const [selectedFlavor, setSelectedFlavor] = useState(null);
   const [ml, setMl] = useState("");
@@ -22,117 +21,139 @@ export default function MiniSklepLiquidow() {
     setTimeout(() => setMessage(""), 3000);
   };
 
+  // ==================== FETCH INVENTORY ====================
   useEffect(() => {
-    fetch(SHEET_API)
-      .then(r => r.json())
-      .then(d => setInventory(d))
-      .catch(console.error);
+    const fetchInventory = () => {
+      fetch(SHEET_API)
+        .then(r => r.json())
+        .then(d => setServerInventory(d))
+        .catch(console.error);
+    };
+
+    fetchInventory(); // od razu
+    const interval = setInterval(fetchInventory, 5000); // co 5s
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => { if (strength === 36 && base === "nikotyna") setBase(null); }, [strength, base]);
   useEffect(() => { if (base === "nikotyna" && strength === 36) setStrength(null); }, [base, strength]);
 
+  // ==================== OBSŁUGA DOSTĘPNOŚCI ====================
+  const getReservedInCart = (flavorId) =>
+    cart
+      .filter(i => i.flavor.id === flavorId)
+      .reduce((s, i) => s + i.ml / 10, 0);
 
-const calculatePrice = (volume, strength, baseType) => {
-  let price = 0;
+  const getAvailableMl = (flavorId) => {
+    const server = serverInventory[flavorId] || 0;
+    const reserved = getReservedInCart(flavorId);
+    return Math.max(0, (server - reserved) * 10);
+  };
 
-  let p10 = 0, p60 = 0;
+  // ==================== CENA ====================
+  const calculatePrice = (volume, strength, baseType) => {
+    let price = 0;
+    let p10 = 0, p60 = 0;
 
-  if (baseType === "sól") {
-    if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } 
-    else { p10=15.5; p60=82; }
-  } else { // nikotyna
-    if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
-    else if(strength===18){ p10=11.5; p60=58; } 
-    else if(strength===24){ p10=12.5; p60=64; }
-  }
+    if (baseType === "sól") {
+      if ([6,12,18].includes(strength)) { p10=14.5; p60=76; } 
+      else { p10=15.5; p60=82; }
+    } else { // nikotyna
+      if ([6,12].includes(strength)) { p10=10.5; p60=52; } 
+      else if(strength===18){ p10=11.5; p60=58; } 
+      else if(strength===24){ p10=12.5; p60=64; }
+    }
 
-  let remainder = volume;
+    let remainder = volume;
+    const num60 = Math.floor(remainder / 60);
+    price += num60 * p60;
+    remainder = remainder % 60;
 
-  // ================== Pełne 60ml ==================
-  const num60 = Math.floor(remainder / 60);
-  price += num60 * p60;
-  remainder = remainder % 60;
+    const num30 = Math.floor(remainder / 30);
+    if (num30 > 0) {
+      const price30 = (() => {
+        if (baseType === "nikotyna") {
+          if ([6,12].includes(strength)) return 31;
+          if (strength === 18) return 34;
+          if (strength === 24) return 37;
+        } else if (baseType === "sól") {
+          if ([6,12,18].includes(strength)) return 43;
+          if ([24,36].includes(strength)) return 46;
+        }
+        return 0;
+      })();
+      price += num30 * price30;
+      remainder = remainder % 30;
+    }
 
-  // ================== Pełne 30ml ==================
-  const num30 = Math.floor(remainder / 30);
-  if (num30 > 0) {
-    const price30 = (() => {
-      if (baseType === "nikotyna") {
-        if ([6,12].includes(strength)) return 31;
-        if (strength === 18) return 34;
-        if (strength === 24) return 37;
-      } else if (baseType === "sól") {
-        if ([6,12,18].includes(strength)) return 43;
-        if ([24,36].includes(strength)) return 46;
-      }
-      return 0;
-    })();
-    price += num30 * price30;
-    remainder = remainder % 30;
-  }
+    price += (remainder / 10) * p10;
+    return price;
+  };
 
-  // ================== Reszta po 10ml ==================
-  price += (remainder / 10) * p10;
-
-  return price;
-};
+  // ==================== DODAWANIE DO KOSZYKA ====================
   const addToCart = () => {
     if (!name || !selectedFlavor || !ml || !strength || !base) { showMessage("❌ Uzupełnij formularz","error"); return; }
     if (ml%10!==0){ showMessage("❌ Tylko co 10ml","error"); return; }
-    const maxMl = (inventory[selectedFlavor.id]||0)*10;
+
+    const maxMl = getAvailableMl(selectedFlavor.id);
     if (ml > maxMl){ showMessage(`❌ Max ${maxMl}ml`,"error"); return; }
+
     const price = calculatePrice(Number(ml), strength, base);
     setCart([...cart, { flavor:selectedFlavor, ml:Number(ml), strength, base, price }]);
-    setInventory(prev => ({ ...prev, [selectedFlavor.id]: prev[selectedFlavor.id]-ml/10 }));
-    setMl(""); showMessage("✅ Dodano do koszyka","success");
+    setMl(""); 
+    showMessage("✅ Dodano do koszyka","success");
   };
 
   const removeItem = idx => {
-    const item = cart[idx];
-    setInventory(prev => ({ ...prev, [item.flavor.id]: prev[item.flavor.id]+item.ml/10 }));
     setCart(cart.filter((_,i)=>i!==idx));
   };
 
-const sendOrder = async () => {
-  if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
-  if(isSending) return;
+  // ==================== WYŚLIJ ZAMÓWIENIE ====================
+  const sendOrder = async () => {
+    if(cart.length===0){ showMessage("❌ Koszyk pusty","error"); return; }
+    if(isSending) return;
 
-  setIsSending(true);
+    setIsSending(true);
 
-  const orderText = cart
-    .map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`)
-    .join("\n");
+    const orderText = cart
+      .map(i=>`${i.flavor.id}/${i.ml}ml/${i.strength}mg/${i.base}/${i.price.toFixed(2)}`)
+      .join("\n");
 
-  const total = cart.reduce((s,i)=>s+i.price,0);
+    const total = cart.reduce((s,i)=>s+i.price,0);
 
-  const usedAromas = {};
-  cart.forEach(i=>{
-    usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10;
-  });
-
-  try {
-    await fetch(SHEET_API,{
-      method:"POST",
-      body:JSON.stringify({
-        name,
-        orderText,
-        total,
-        usedAromas
-      })
+    const usedAromas = {};
+    cart.forEach(i=>{
+      usedAromas[i.flavor.id]=(usedAromas[i.flavor.id]||0)+i.ml/10;
     });
 
-    showMessage("✅ Zamówienie wysłane!","success");
-    setCart([]);
+    try {
+      await fetch(SHEET_API,{
+        method:"POST",
+        body:JSON.stringify({
+          name,
+          orderText,
+          total,
+          usedAromas
+        })
+      });
 
-  } catch {
-    showMessage("❌ Błąd wysyłki","error");
-  } finally {
-    setIsSending(false);
-  }
-};
+      showMessage("✅ Zamówienie wysłane!","success");
 
+      // ==================== AKTUALIZACJA LOKALNEGO INVENTORY ====================
+      const newInventory = { ...serverInventory };
+      Object.entries(usedAromas).forEach(([id, used]) => {
+        newInventory[id] = Math.max(0, (newInventory[id] || 0) - used);
+      });
+      setServerInventory(newInventory);
 
+      setCart([]);
+
+    } catch {
+      showMessage("❌ Błąd wysyłki","error");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   const total = cart.reduce((s,i)=>s+i.price,0);
 
@@ -145,8 +166,7 @@ const sendOrder = async () => {
     "Inne smaki":["#34d399","#bbf7d0"]
   };
 
-  // ================= SMAKI =================
-  const flavorCategories = {
+ const flavorCategories = {
     "Miksy owocowe":[
       {id:1,name:"Czerwone owoce, Czarna porzeczka, Truskawka, Jeżyna, Malina, Jagoda, Efekt chłodu"},
       {id:2,name:"Czerwone owoce, Truskawka, Czarna porzeczka, Efekt lodowaty"},
@@ -214,84 +234,75 @@ const sendOrder = async () => {
     ]
   };
 
-
   return (
     <div style={{ maxWidth:520, margin:"40px auto", padding:15, borderRadius:12, background:`url(${bg}) center/cover`, boxShadow:"0 0 20px rgba(0,0,0,.2)" }}>
       <h2 style={{textAlign:"center"}}>Mini sklep liquidów</h2>
 
-      {/* ===== IMIĘ ===== */}
       <input placeholder="Imię" value={name} onChange={e=>setName(e.target.value)}
         style={{width:"50%", padding:"4px 6px", marginBottom:10, fontSize:18}} />
 
-  
+      <h3>Smaki</h3>
+      {Object.entries(flavorCategories).map(([cat, flavors])=>{
+        const [main, light] = categoryColors[cat];
+        return <details key={cat} style={{marginBottom:10, borderRadius:8, padding:5, background:main}}>
+          <summary style={{fontWeight:"bold", padding:6}}>{cat}</summary>
+          <div style={{padding:6, display:"flex", flexDirection:"column", gap:4}}>
+            {flavors.map(f=>{
+              const stock = getAvailableMl(f.id);
+              const stockColor = stock===0?"red":stock<120?"#facc15":"#22c55e";
 
-
-{/* ===== SMAKI ===== */}
-<h3>Smaki</h3>
-{Object.entries(flavorCategories).map(([cat, flavors])=>{
-  const [main, light] = categoryColors[cat];
-  return <details key={cat} style={{marginBottom:10, borderRadius:8, padding:5, background:main}}>
-    <summary style={{fontWeight:"bold", padding:6}}>{cat}</summary>
-    <div style={{padding:6, display:"flex", flexDirection:"column", gap:4}}>
-      {flavors.map(f=>{
-        const stock=(inventory[f.id]||0)*10;
-        const stockColor = stock===0?"red":stock<120?"#facc15":"#22c55e";
-
-        return <label key={f.id} style={{
-          display:"flex", alignItems:"center", fontSize:13, 
-          background:`linear-gradient(90deg, ${light}, #fff)`, borderRadius:6, padding:"4px 6px",
-          cursor:stock===0?"not-allowed":"pointer", opacity:stock===0?0.6:1
-        }}
-        onClick={()=>{
-          if(stock===0) showMessage("❌ Brak na stanie", "error");
-          else setSelectedFlavor(f);
-        }}>
-          <span style={{
-            width:16, height:16, border:"1px solid #000", display:"inline-block",
-            marginRight:6, textAlign:"center", lineHeight:"16px",
-            background:selectedFlavor?.id===f.id?"green":"#fff", color:"#fff"
-          }}>{selectedFlavor?.id===f.id?"✔":""}</span>
-          {f.id}. {f.name}
-          <span style={{marginLeft:6, fontWeight:"bold", color:stockColor}}>
-            (na stanie: {stock}ml)
-          </span>
-        </label>
+              return <label key={f.id} style={{
+                display:"flex", alignItems:"center", fontSize:13, 
+                background:`linear-gradient(90deg, ${light}, #fff)`, borderRadius:6, padding:"4px 6px",
+                cursor:stock===0?"not-allowed":"pointer", opacity:stock===0?0.6:1
+              }}
+              onClick={()=>{
+                if(stock===0) showMessage("❌ Brak na stanie", "error");
+                else setSelectedFlavor(f);
+              }}>
+                <span style={{
+                  width:16, height:16, border:"1px solid #000", display:"inline-block",
+                  marginRight:6, textAlign:"center", lineHeight:"16px",
+                  background:selectedFlavor?.id===f.id?"green":"#fff", color:"#fff"
+                }}>{selectedFlavor?.id===f.id?"✔":""}</span>
+                {f.id}. {f.name}
+                <span style={{marginLeft:6, fontWeight:"bold", color:stockColor}}>
+                  (na stanie: {stock}ml)
+                </span>
+              </label>
+            })}
+          </div>
+        </details>
       })}
-    </div>
-  </details>
-})}
 
-{/* ===== BAZA ===== */}
-<h3>Baza</h3>
-{["Nikotyna","Sól"].map(v=>{
-  const disabled = v==="Nikotyna" && strength===36;
-  return <div key={v} onClick={()=>!disabled && setBase(v.toLowerCase())} 
-    style={{
-      display:"inline-block", width:70, height:30, marginRight:6,
-      border:"1px solid #000", borderRadius:4, textAlign:"center",
-      lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
-      background:base?.toLowerCase()===v.toLowerCase()?"green":"#eee",
-      color:base?.toLowerCase()===v.toLowerCase()?"#fff":"#000",
-      opacity:disabled?.4:1
-    }}>
-      {v}
-  </div>
-})}
+      <h3>Baza</h3>
+      {["Nikotyna","Sól"].map(v=>{
+        const disabled = v==="Nikotyna" && strength===36;
+        return <div key={v} onClick={()=>!disabled && setBase(v.toLowerCase())} 
+          style={{
+            display:"inline-block", width:70, height:30, marginRight:6,
+            border:"1px solid #000", borderRadius:4, textAlign:"center",
+            lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
+            background:base?.toLowerCase()===v.toLowerCase()?"green":"#eee",
+            color:base?.toLowerCase()===v.toLowerCase()?"#fff":"#000",
+            opacity:disabled?.4:1
+          }}>
+            {v}
+        </div>
+      })}
 
-{/* ===== MOC ===== */}
-<h3>Moc</h3>
-{[6,12,18,24,36].map(v=>{
-  const disabled = base==="nikotyna" && v===36;
-  return <div key={v} onClick={()=>!disabled && setStrength(v)} style={{
-    display:"inline-block", width:40, height:30, marginRight:6, 
-    border:"1px solid #000", borderRadius:4, textAlign:"center",
-    lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
-    background:strength===v?"green":"#eee", color:strength===v?"#fff":"#000",
-    opacity:disabled?.4:1
-  }}>{v}mg</div>
-})}
+      <h3>Moc</h3>
+      {[6,12,18,24,36].map(v=>{
+        const disabled = base==="nikotyna" && v===36;
+        return <div key={v} onClick={()=>!disabled && setStrength(v)} style={{
+          display:"inline-block", width:40, height:30, marginRight:6, 
+          border:"1px solid #000", borderRadius:4, textAlign:"center",
+          lineHeight:"30px", cursor:disabled?"not-allowed":"pointer",
+          background:strength===v?"green":"#eee", color:strength===v?"#fff":"#000",
+          opacity:disabled?.4:1
+        }}>{v}mg</div>
+      })}
 
-      {/* ===== ILOŚĆ ===== */}
       <h3>Ilość (ml)</h3>
       <input type="number" step={10} min={10} value={ml} onChange={e=>setMl(e.target.value)} style={{width:"30%", padding:"4px 6px", fontSize:18, WebkitAppearance:"none"}}/>
 
