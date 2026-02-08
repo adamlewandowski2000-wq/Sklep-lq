@@ -1,9 +1,7 @@
-KODNAJ
-
 import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
-const SHEET_API = "https://script.google.com/macros/s/AKfycbwM8fCuP1xFecGH6nScRvnvgUSd3yKZg14mKuuk3pHuzS-bl8pixB_gYU9cxU3DHp-9/exec";
+const SHEET_API = "https://script.google.com/macros/s/AKfycbzJantR9Ez2A17Ss8TBi002Qap9_sS6Zysi8bdkRzBY97bKrbk3Wo8mZlkvp5l86UXW/exec";
 
 export default function MiniSklepLiquidow() {
   const [serverInventory, setServerInventory] = useState({});
@@ -305,8 +303,32 @@ export default function MiniSklepLiquidow() {
         }}>{v}mg</div>
       })}
 
-      <h3>Ilość (ml)</h3>
-      <input type="number" step={10} min={10} value={ml} onChange={e=>setMl(e.target.value)} style={{width:"30%", padding:"4px 6px", fontSize:18, WebkitAppearance:"none"}}/>
+<h3>Ilość (ml)</h3>
+
+<div style={{ display:"flex", alignItems:"center", gap:12 }}>
+  <input
+    type="number"
+    step={10}
+    min={10}
+    value={ml}
+    onChange={e=>setMl(e.target.value)}
+    style={{ width:"30%", padding:"4px 6px", fontSize:18, WebkitAppearance:"none" }}
+  />
+
+  <span style={{
+    fontSize:12,
+    fontWeight:700,
+    color:"#b91c1c",
+    background:"#fef08a",
+    padding:"2px 6px",
+    borderRadius:6,
+    display:"inline-block",
+    animation: "pulse 1s infinite"
+  }}>
+    🌟 Przy zakupie 60ml jednego smaku cena jest bardziej korzystna!
+  </span>
+</div>
+
 
       <button onClick={addToCart} style={{width:"100%", marginTop:10, padding:12, borderRadius:8, background:"#22c55e", color:"#fff", border:"none"}}>➕ Dodaj do koszyka</button>
 
@@ -320,6 +342,15 @@ export default function MiniSklepLiquidow() {
       <button disabled={isSending} onClick={sendOrder} style={{width:"100%", marginTop:15, padding:12, background:isSending?"#9ca3af":"#16a34a", color:"#fff", border:"none", borderRadius:8}}>
         {isSending?"Wysyłanie...":"📤 Wyślij zamówienie"}
       </button>
+
+{/* na końcu komponentu, w JSX, dodaj globalnie style */}
+<style>{`
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+`}</style>
     </div>
   );
 }
