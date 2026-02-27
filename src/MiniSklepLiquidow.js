@@ -220,7 +220,7 @@ export default function MiniSklepLiquidow() {
       {id:49,name:"Brzoskwinia"},
       {id:50,name:"Winogrono"},
       {id:51,name:"Winogrono, Jabłko"},
-      {id:52,name:"Herbata"},
+      {id:52,name:"Winogrono, Efekt chłodu"},
       {id:53,name:"Czerwone owoce, Malina, Efekt chłodu"}
     ]
   };
