@@ -217,7 +217,7 @@ export default function MiniSklepLiquidow() {
       {id:46,name:"Cola, Efekt lodowaty"},
       {id:47,name:"Arbuz"},
       {id:48,name:"Energetyk"},
-      {id:49,name:"Brzoskwinia"},
+      {id:49,name:"Brzoskwinia, Kiwi, Malina"},
       {id:50,name:"Winogrono"},
       {id:51,name:"Winogrono, Jabłko"},
       {id:52,name:"Winogrono, Efekt chłodu"},
