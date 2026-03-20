@@ -230,7 +230,7 @@ export default function MiniSklepLiquidow() {
     <div style={{ maxWidth:520, margin:"40px auto", padding:15, borderRadius:12, background:`url(${bg}) center/cover`, boxShadow:"0 0 20px rgba(0,0,0,.2)" }}>
       <h2 style={{textAlign:"center"}}>Mini sklep liquidów</h2>
 
-      <input placeholder="Imię i nazwisko" value={name} onChange={e=>setName(e.target.value)}
+      <input placeholder="Imię i Nazwisko" value={name} onChange={e=>setName(e.target.value)}
         style={{width:"50%", padding:"4px 6px", marginBottom:10, fontSize:18}} />
 
       <h3>Smaki</h3>
