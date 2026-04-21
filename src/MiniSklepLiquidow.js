@@ -28,7 +28,7 @@ export default function MiniSklepLiquidow() {
   const showMessage = (txt, type = "info") => {
     setMessage(txt);
     setMessageType(type);
-    setTimeout(() => setMessage(""), 3000);
+    setTimeout(() => setMessage(""), 6000);
   };
 
   // ================= FETCH INVENTORY =================
