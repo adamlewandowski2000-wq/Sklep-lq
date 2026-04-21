@@ -137,10 +137,12 @@ export default function MiniSklepLiquidow() {
         method: "POST",
         body: JSON.stringify({ name, orderText, total, usedAromas }),
       });
-      showMessage(
+showMessage(
   <>
     ✅ Zamówienie wysłane!<br />
-    Po odbiór odezwij się na priv
+    <strong style={{ color: "red" }}>
+      Po odbiór odezwij się na priv!
+    </strong>
   </>,
   "success"
 );
