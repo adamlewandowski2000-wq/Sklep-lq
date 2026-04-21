@@ -137,7 +137,13 @@ export default function MiniSklepLiquidow() {
         method: "POST",
         body: JSON.stringify({ name, orderText, total, usedAromas }),
       });
-      showMessage("✅ Zamówienie wysłane!", "success");
+      showMessage(
+  <>
+    ✅ Zamówienie wysłane!<br />
+    Po odbiór odezwij się na priv
+  </>,
+  "success"
+);
       localStorage.clear();
       setCart([]); setName(""); setMl(""); setStrength(null); setBase(null); setSelectedFlavor(null);
     } catch {
