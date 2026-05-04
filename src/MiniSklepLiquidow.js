@@ -89,12 +89,12 @@ export default function MiniSklepLiquidow() {
     if (num30 > 0) {
       const price30 = (() => {
         if (baseType === "nikotyna") {
-          if ([6, 12].includes(strength)) return 31;
-          if (strength === 18) return 34;
-          if (strength === 24) return 37;
+          if ([6, 12].includes(strength)) return 32.5;
+          if (strength === 18) return 35.5;
+          if (strength === 24) return 38.5;
         } else {
-          if ([6, 12, 18].includes(strength)) return 43;
-          if ([24, 36].includes(strength)) return 46;
+          if ([6, 12, 18].includes(strength)) return 44.5;
+          if ([24, 36].includes(strength)) return 47.5;
         }
         return 0;
       })();
