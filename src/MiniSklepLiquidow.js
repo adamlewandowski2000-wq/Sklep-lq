@@ -74,12 +74,12 @@ export default function MiniSklepLiquidow() {
     let p10 = 0,
       p60 = 0;
     if (baseType === "sól") {
-      if ([6, 12, 18].includes(strength)) { p10 = 14.5; p60 = 76; }
-      else { p10 = 15.5; p60 = 82; }
+      if ([6, 12, 18].includes(strength)) { p10 = 15; p60 = 79; }
+      else { p10 = 16; p60 = 85; }
     } else {
-      if ([6, 12].includes(strength)) { p10 = 10.5; p60 = 52; }
-      else if (strength === 18) { p10 = 11.5; p60 = 58; }
-      else if (strength === 24) { p10 = 12.5; p60 = 64; }
+      if ([6, 12].includes(strength)) { p10 = 11; p60 = 55; }
+      else if (strength === 18) { p10 = 12; p60 = 61; }
+      else if (strength === 24) { p10 = 13; p60 = 67; }
     }
     let remainder = volume;
     const num60 = Math.floor(remainder / 60);
