@@ -229,7 +229,8 @@ showMessage(
       {id:50,name:"Winogrono"},
       {id:51,name:"Winogrono, Jabłko"},
       {id:52,name:"Winogrono, Efekt chłodu"},
-      {id:53,name:"Czerwone owoce, Malina, Efekt chłodu"}
+      {id:53,name:"Czerwone owoce, Malina, Efekt chłodu"},
+      {id:54,name:"Czerwone jagody, Kaktus, Cytryna, Efekt chłodu"}
     ]
   };
 
