@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
 const SHEET_API =
-  "https://script.google.com/macros/s/AKfycbyEEJrQN0Nf4UkW0jAbi23Pxvid1p8Aaf1OneJ-PyE_1YkIXjnWTjnlz-SKIC58uSY8/exec";
+   "https://script.google.com/macros/s/AKfycbyEEJrQN0Nf4UkW0jAbi23Pxvid1p8Aaf1OneJ-PyE_1YkIXjnWTjnlz-SKIC58uSY8/exec";
 
 export default function MiniSklepLiquidow() {
   const [serverInventory, setServerInventory] = useState({});
@@ -303,13 +303,22 @@ useEffect(() => {
       Number(i.active) === 1
   );
 
-  if (!found) {
-    showMessage(
-      "❌ Kod nieaktywny lub nieprawidłowy",
-      "error"
-    );
-    return;
-  }
+ if (!found) {
+
+setBonusMl(0);
+
+setCodeActivated(false);
+
+setDiscountCode("");
+
+showMessage(
+"❌ Kod nieaktywny lub nieprawidłowy",
+"error"
+);
+
+return;
+
+}
 
 setBonusMl(found.ml);
 
@@ -480,10 +489,18 @@ name,
 orderText,
 total,
 usedAromas,
+
 usedCode:
-codeActivated
- ? discountCode
- : null
+
+cart.some(
+ item =>
+ item.isBonus===true
+)
+
+? discountCode
+
+: null
+
 })
 });
 
@@ -1025,17 +1042,69 @@ transition:"all .2s"
   </button>
 </div>
 
-{bonusMl > 0 && (
+{codeActivated && bonusMl>0 && (
 <div
 style={{
 background:"#dcfce7",
 padding:10,
-borderRadius:8,
+borderRadius:10,
 marginTop:10,
+display:"flex",
+alignItems:"center",
+justifyContent:"space-between",
+border:"2px solid #22c55e"
+}}
+>
+
+<div>
+🎁 Kod aktywny:
+<strong>
+ {" "}
+{discountCode}
+</strong>
+
+<div
+style={{
+fontSize:12,
+marginTop:4
+}}
+>
+Gratis: {bonusMl}ml
+</div>
+</div>
+
+<button
+onClick={()=>{
+
+setDiscountCode("");
+
+setBonusMl(0);
+
+setCodeActivated(false);
+
+localStorage.removeItem(
+"miniSklepCode"
+);
+
+showMessage(
+"❌ Usunięto kod",
+"info"
+);
+
+}}
+style={{
+background:"#ef4444",
+color:"#fff",
+border:"none",
+padding:"6px 10px",
+borderRadius:8,
+cursor:"pointer",
 fontWeight:"bold"
 }}
 >
-🎁 Możesz dodać GRATIS {bonusMl}ml
+✖
+</button>
+
 </div>
 )}
 <h3>Koszyk</h3>
