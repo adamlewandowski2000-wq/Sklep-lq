@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import bg from "./assets/bg-liquid.png";
 
 const SHEET_API =
-  "https://script.google.com/macros/s/AKfycbza9BtjXCr3dZ_U16HWzHZQGDNwfTXSHIXD3q3DeeU-cYQPbGhComaItPhbQIpsz0S8qQ/exec";
+  "https://script.google.com/macros/s/AKfycbyEEJrQN0Nf4UkW0jAbi23Pxvid1p8Aaf1OneJ-PyE_1YkIXjnWTjnlz-SKIC58uSY8/exec";
 
 export default function MiniSklepLiquidow() {
   const [serverInventory, setServerInventory] = useState({});
@@ -445,23 +445,17 @@ try {
 setShowReferralPopup(true);
 setLastOrderTotal(total);
 
-setOrderSent(true);
+setTimeout(() => {
+
+showMessage(
+"✅ Zamówienie wysłane! Odezwij się po odbiór 😎",
+"success"
+);
 
 localStorage.setItem(
  "miniSklepOrderSent",
  "1"
 );
-
-// czyść natychmiast UI
-setCart([]);
-setName("");
-setMl("");
-setStrength(null);
-setBase(null);
-setSelectedFlavor(null);
-setDiscountCode("");
-setBonusMl(0);
-setCodeActivated(false);
 
 localStorage.removeItem("miniSklepCart");
 localStorage.removeItem("miniSklepName");
@@ -470,7 +464,15 @@ localStorage.removeItem("miniSklepStrength");
 localStorage.removeItem("miniSklepBase");
 localStorage.removeItem("miniSklepCode");
 
-// wyślij w tle
+setCart([]);
+setName("");
+setMl("");
+setStrength(null);
+setBase(null);
+setSelectedFlavor(null);
+setBonusMl(0);
+setCodeActivated(false);
+
 fetch(SHEET_API,{
 method:"POST",
 body:JSON.stringify({
@@ -480,30 +482,55 @@ total,
 usedAromas,
 usedCode:
 codeActivated
-? discountCode
-: null
+ ? discountCode
+ : null
 })
 });
 
+},0);
+
+
 showMessage(
-"✅ Zamówienie wysłane!",
+"✅ Zamówienie wysłane! Odezwij się po odbiór 😎",
 "success"
 );
 
-}
-catch(err){
 
-console.error(err);
+// usuń tylko dane sklepu
+localStorage.removeItem("miniSklepCart");
+localStorage.removeItem("miniSklepName");
+localStorage.removeItem("miniSklepMl");
+localStorage.removeItem("miniSklepStrength");
+localStorage.removeItem("miniSklepBase");
+localStorage.removeItem("miniSklepCode");
 
-showMessage(
-"❌ Problem z wysyłką",
-"error"
-);
 
-}
-finally{
 
-setIsSending(false);
+// wyczyść React state
+setCart([]);
+setName("");
+setMl("");
+setStrength(null);
+setBase(null);
+setSelectedFlavor(null);
+setDiscountCode("");
+setBonusMl(0);
+
+
+} catch (err) {
+
+  console.error(err);
+
+  showMessage(
+    "❌ Problem z wysyłką",
+    "error"
+  );
+
+}finally {
+
+  setOrderSent(false);
+
+  setIsSending(false);
 
 }
 };
