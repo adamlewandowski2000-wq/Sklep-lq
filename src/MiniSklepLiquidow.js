@@ -1076,6 +1076,14 @@ Gratis: {bonusMl}ml
 <button
 onClick={()=>{
 
+// usuń gratis z koszyka
+const newCart =
+cart.filter(
+ item => !item.isBonus
+);
+
+setCart(newCart);
+
 setDiscountCode("");
 
 setBonusMl(0);
@@ -1087,7 +1095,7 @@ localStorage.removeItem(
 );
 
 showMessage(
-"❌ Usunięto kod",
+"❌ Usunięto kod i gratis",
 "info"
 );
 
