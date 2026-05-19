@@ -325,7 +325,7 @@ setBonusMl(found.ml);
 setCodeActivated(true);
 
 showMessage(
-`🎁 Aktywowano gratis ${found.ml}ml`,
+`🎁 Możesz dodać do koszyka ${found.ml}ml`,
 "success"
 );
 };
@@ -479,6 +479,7 @@ setMl("");
 setStrength(null);
 setBase(null);
 setSelectedFlavor(null);
+setDiscountCode("");
 setBonusMl(0);
 setCodeActivated(false);
 
@@ -506,32 +507,6 @@ cart.some(
 
 },0);
 
-
-showMessage(
-"✅ Zamówienie wysłane! Odezwij się po odbiór 😎",
-"success"
-);
-
-
-// usuń tylko dane sklepu
-localStorage.removeItem("miniSklepCart");
-localStorage.removeItem("miniSklepName");
-localStorage.removeItem("miniSklepMl");
-localStorage.removeItem("miniSklepStrength");
-localStorage.removeItem("miniSklepBase");
-localStorage.removeItem("miniSklepCode");
-
-
-
-// wyczyść React state
-setCart([]);
-setName("");
-setMl("");
-setStrength(null);
-setBase(null);
-setSelectedFlavor(null);
-setDiscountCode("");
-setBonusMl(0);
 
 
 } catch (err) {
@@ -1019,18 +994,40 @@ transition:"all .2s"
     gap: 12,
   }}
 >
-  <input
-    placeholder="Kod"
-    value={discountCode}
-    onChange={(e) =>
-      setDiscountCode(e.target.value)
-    }
-    style={{
-      width: "30%",
-      padding: "4px 6px",
-      fontSize: 18,
-    }}
-  />
+<input
+placeholder="Kod"
+
+value={discountCode}
+
+disabled={codeActivated}
+
+onChange={(e)=>
+setDiscountCode(
+e.target.value
+)
+}
+
+style={{
+width:"30%",
+padding:"4px 6px",
+fontSize:18,
+
+background:
+codeActivated
+? "#e5e7eb"
+: "#fff",
+
+opacity:
+codeActivated
+? .6
+: 1,
+
+cursor:
+codeActivated
+? "not-allowed"
+: "text"
+}}
+/>
 
   <button
     onClick={checkDiscountCode}
@@ -1208,15 +1205,19 @@ fontWeight:"bold"
         boxShadow: "0 0 25px rgba(0,0,0,.3)",
       }}
     >
-      <h2
-        style={{
-          marginTop: 0,
-          color: "#16a34a",
-          fontSize: 28,
-        }}
-      >
-        ✅ Zamówienie przyjęte
-      </h2>
+ <h2
+  style={{
+    marginTop:0,
+    color:"#16a34a",
+    fontSize:28,
+    textAlign:"center",
+    lineHeight:1.5
+  }}
+>
+  ✅ Zamówienie wysłane!
+  <br />
+  Odezwij się po odbiór 😎
+</h2>
 
       <div
         style={{
