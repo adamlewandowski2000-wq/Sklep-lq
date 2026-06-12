@@ -420,6 +420,16 @@ showMessage(
   // ================= SEND =================
 
 const sendOrder = async () => {
+
+   if (
+  codeActivated &&
+  !cart.some(item => item.isBonus)
+) {
+  return showMessage(
+    `❌ Aktywowałeś kod ${discountCode}. Musisz dodać gratis ${bonusMl}ml do koszyka.`,
+    "error"
+  );
+}
   if (!name)
     return showMessage("❌ Podaj imię", "error");
 
