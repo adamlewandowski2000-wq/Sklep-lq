@@ -550,6 +550,7 @@ cart.some(
     "Cytrusy/kwaśne":["#fde68a","#fef9c3"],
     "Miętowe/mentholowe":["#60a5fa","#bfdbfe"],
     "Inne smaki":["#34d399","#bbf7d0"]
+    "Nowości":["#f472b6","#fce7f3"],
   };
 
   const flavorCategories = {
@@ -619,6 +620,13 @@ cart.some(
       {id:53,name:"Czerwone owoce, Malina, Efekt chłodu"},
       {id:54,name:"Czerwone jagody, Kaktus, Cytryna, Efekt chłodu"}
     ]
+        "Nowości":[
+      {id:55,name:"Mango, Efekt chłodu"},
+      {id:56,name:"Smoczy owoc, Truskawka, Efekt chłodu"},
+      {id:57,name:"Niebieska malina, Jeżyna, Cukierki"}
+      {id:58,name:"Melon, Efekt chłodu"}
+      {id:59,name:"Kaktus, Limonka, Efekt chłodu"}
+    ],
   };
   return (
     <div
