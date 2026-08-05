@@ -624,8 +624,10 @@ cart.some(
       {id:55,name:"Mango, Efekt chłodu"},
       {id:56,name:"Smoczy owoc, Truskawka, Efekt chłodu"},
       {id:57,name:"Niebieska malina, Jeżyna, Cukierki"},
-      {id:58,name:"Melon, Efekt chłodu"},
-      {id:59,name:"Kaktus, Limonka, Efekt chłodu"}
+      {id:58,name:"Melon, Efekt chłodu"},  
+      {id:59,name:"Kaktus, Limonka, Efekt chłodu"},
+      {id:60,name:"Guma do żucia, Melon"},
+      {id:61,name:"Cytryna, Limonka, Arbuz"}
     ],
   };
   return (
