@@ -627,7 +627,9 @@ cart.some(
       {id:58,name:"Melon, Efekt chłodu"},  
       {id:59,name:"Kaktus, Limonka, Efekt chłodu"},
       {id:60,name:"Guma do żucia, Melon"},
-      {id:61,name:"Cytryna, Limonka, Arbuz"}
+      {id:61,name:"Cytryna, Limonka, Arbuz"},
+      {id:62,name:"Truskawka, Czerwone jagody, Czarna porzeczka, Wiśnia, Jeżyna, Malina, Efekt Chłodu"},
+      {id:63,name:"Lemoniada, Niebieska Malina, Efekt Musujący, Efekt Chłodzący"}
     ],
   };
   return (
