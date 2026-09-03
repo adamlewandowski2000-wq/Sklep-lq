@@ -50,7 +50,10 @@ const [codes,setCodes]=useState([]);
 
 const [showReferralPopup, setShowReferralPopup] =
   useState(false);
- 
+
+ // Popup z informacją o urlopie — pokazuje się przy każdym wejściu/odświeżeniu
+ const [showVacationPopup, setShowVacationPopup] = useState(true);
+   
 const [lastOrderTotal, setLastOrderTotal] =
   useState(0);
 
@@ -1203,6 +1206,81 @@ fontWeight:"bold"
           ? "⏳ Wysyłanie..."
           : "📤 Wyślij zamówienie"}
       </button>
+
+{/* ================= POPUP URLOPOWY ================= */}
+      {showVacationPopup && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,.72)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 10000,
+            padding: 20,
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              padding: 28,
+              borderRadius: 18,
+              width: "100%",
+              maxWidth: 400,
+              textAlign: "center",
+              boxShadow: "0 0 30px rgba(0,0,0,.4)",
+            }}
+          >
+            <div style={{ fontSize: 48, marginBottom: 8 }}>🌴</div>
+
+            <h2
+              style={{
+                marginTop: 0,
+                marginBottom: 14,
+                fontSize: 26,
+                color: "#16a34a",
+              }}
+            >
+              INFORMACJA O URLOPIE
+            </h2>
+
+            <p
+              style={{
+                fontSize: 16,
+                lineHeight: 1.6,
+                marginBottom: 20,
+              }}
+            >
+              W dniach <strong>28.09–06.10</strong> przebywam na urlopie.
+              <br />
+              <br />
+              Zamówienia złożone w tym czasie będą realizowane po powrocie.
+              <br />
+              <br />
+              Zapraszam do wcześniejszego zamawiania!
+            </p>
+
+            <button
+              onClick={() => setShowVacationPopup(false)}
+              style={{
+                width: "100%",
+                padding: 12,
+                border: "none",
+                borderRadius: 12,
+                background: "#16a34a",
+                color: "#fff",
+                fontWeight: "bold",
+                fontSize: 16,
+                cursor: "pointer",
+              }}
+            >
+              👍 Rozumiem
+            </button>
+          </div>
+        </div>
+      )}
+
 
 {showReferralPopup && (
   <div
