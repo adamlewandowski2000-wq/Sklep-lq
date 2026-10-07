@@ -52,7 +52,7 @@ const [showReferralPopup, setShowReferralPopup] =
   useState(false);
 
  // Popup z informacją o urlopie — pokazuje się przy każdym wejściu/odświeżeniu
- const [showVacationPopup, setShowVacationPopup] = useState(true);
+ const [showVacationPopup, setShowVacationPopup] = useState(false);
    
 const [lastOrderTotal, setLastOrderTotal] =
   useState(0);
