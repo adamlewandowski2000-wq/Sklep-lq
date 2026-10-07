@@ -579,7 +579,7 @@ cart.some(
       {id:17,name:"Owoce leśne, Granat, Róża, Nutka świeżości"},
       {id:18,name:"Wiśnia, Agrest czarny"},
       {id:19,name:"Wata cukrowa, Fiołek, Jagoda, Owoce leśne, Nutka świeżości"},
-      {id:20,name:"Malina, Jagoda, Cytryna"},
+      {id:20,name:"Jagody, Niebieska malina, Świeży efekt"},
       {id:21,name:"Granat, Truskawka, Czarna porzeczka, Efekt chłodu"}
     ],
     "Tropikalne/Egzotyczne":[
@@ -619,7 +619,7 @@ cart.some(
       {id:49,name:"Brzoskwinia, Kiwi, Malina"},
       {id:50,name:"Winogrono"},
       {id:51,name:"Winogrono, Jabłko"},
-      {id:52,name:"Czerwone owoce, Niebieska malina, Efekt chłodu"},
+      {id:52,name:"Winogrono, Lodowata świeżość"},
       {id:53,name:"Czerwone owoce, Malina, Efekt chłodu"},
       {id:54,name:"Czerwone jagody, Kaktus, Cytryna, Efekt chłodu"}
     ],
