@@ -619,12 +619,12 @@ cart.some(
       {id:49,name:"Brzoskwinia, Kiwi, Malina"},
       {id:50,name:"Winogrono"},
       {id:51,name:"Winogrono, Jabłko"},
-      {id:52,name:"Winogrono, Efekt chłodu"},
+      {id:52,name:"Czerwone owoce, Niebieska malina, Efekt chłodu"},
       {id:53,name:"Czerwone owoce, Malina, Efekt chłodu"},
       {id:54,name:"Czerwone jagody, Kaktus, Cytryna, Efekt chłodu"}
     ],
         "Nowości":[
-      {id:55,name:"Mango, Efekt chłodu"},
+      {id:55,name:"Lemoniada, Żółta cytryna, Limonka, Świeżość"},
       {id:56,name:"Smoczy owoc, Truskawka, Efekt chłodu"},
       {id:57,name:"Niebieska malina, Jeżyna, Cukierki"},
       {id:58,name:"Melon, Efekt chłodu"},  
@@ -632,7 +632,8 @@ cart.some(
       {id:60,name:"Guma do żucia, Melon"},
       {id:61,name:"Cytryna, Limonka, Arbuz"},
       {id:62,name:"Truskawka, Czerwone jagody, Czarna porzeczka, Wiśnia, Jeżyna, Malina, Efekt Chłodu"},
-      {id:63,name:"Lemoniada, Niebieska Malina, Efekt Musujący, Efekt Chłodzący"}
+      {id:63,name:"Lemoniada, Niebieska Malina, Efekt Musujący, Efekt Chłodzący"},
+      {id:64,name:"Smoczy owoc, Napój energetyczny, Efekt Chłodzący"}
     ],
   };
   return (
